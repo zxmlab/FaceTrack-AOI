@@ -1,12 +1,10 @@
 # FaceTrack-AOI
-An AI-Driven Tool for Automated Dynamic AOI Placement and Gaze Analysis in Facial Learning Studies
 
+An AI-Driven Tool for Automated Dynamic AOI Placement and Gaze Analysis in Facial Learning Studies
 
 ## Project Overview
 
 This project presents a modular toolkit for facial landmark detection and fixation analysis across both image and video formats. Designed with cognitive and behavioral research in mind—such as face perception, eye-tracking analysis, and attention modeling—the toolkit enables researchers to extract precise facial feature coordinates and compare them to gaze fixation data. The modular structure supports extensibility, batch processing, and integration into experimental pipelines.
-
-## Motivation and Background
 
 Eye-tracking studies involving human faces often require region-specific fixation analysis—e.g., determining whether fixations fall within the eyes, nose, or mouth. However, raw fixation coordinates are typically collected independently of facial feature segmentation. This toolkit bridges that gap by providing an automated pipeline to detect facial landmarks and compare them to fixation data on a frame-by-frame or image-by-image basis.
 
@@ -38,10 +36,7 @@ Each module is implemented as an independent component but shares a consistent i
   - `VIDEO_NAME_END` or `IMAGE_NAME_END`: filename reference
   - `VIDEO_FRAME_INDEX_END`: (for video) specifies the frame to match
   - `x`, `y`: fixation coordinate in pixels
-
-### Output (After Fixation Comparison)
-
-- New columns are added to fixation data:
+- **Output: New columns are added to fixation data**:
   - `CURRENT_IA_<region>`: binary indicator (1 = inside region, 0 = outside)
   - `CURRENT_Area_<region>`: pixel area of the region
 
@@ -76,26 +71,16 @@ The `process_videos` function enables the generation of videos with overlaid fac
 
 - **Programming Language**: Python 3.7+
 - **Libraries**:
-  - `dlib`
-  - `opencv-python`
   - `numpy`
+  - `opencv-python`
+  - `dlib`
   - `pandas`
   - `tqdm` (for progress monitoring)
+  - `moviepy`
+  - `kivy`
 - **Pre-trained Model**: `shape_predictor_68_face_landmarks.dat` (Dlib)
 
 All required libraries can be installed via `pip`, and the model can be downloaded from the official Dlib repository.
-
-## Performance and Scalability
-
-- Batch processing of video/image directories is supported.
-- Multithreading via Python’s `concurrent.futures` significantly improves processing speed for large datasets.
-- Lightweight and portable; does not require GPU.
-
-## Customization and Extensibility
-
-- Region amplification factors are modifiable to adapt to various experimental setups.
-- Alternative facial detection models can be integrated with minimal refactoring.
-- Output format is designed to be easily merged with eye-tracking experiment data.
 
 ## Example Usage
 
@@ -139,7 +124,7 @@ process_videos(
 )
 ```
 
-## Conclusion
+## Citation
 
-This toolkit offers a practical and flexible solution for researchers and developers working on facial perception and eye-tracking analysis. Its modularity, efficiency, and extensibility make it well-suited for cognitive psychology, HCI, and behavioral neuroscience research contexts.
+To be done.
 
