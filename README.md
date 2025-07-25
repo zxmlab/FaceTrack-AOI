@@ -1,7 +1,3 @@
-# FaceTrack-AOI
-
-An AI-Driven Tool for Automated Dynamic AOI Placement and Gaze Analysis in Facial Learning Studies
-
 ## Project Overview
 
 This project presents a modular toolkit for facial landmark detection and fixation analysis across both image and video formats. Designed with cognitive and behavioral research in mind—such as face perception, eye-tracking analysis, and attention modeling—the toolkit enables researchers to extract precise facial feature coordinates and compare them to gaze fixation data. The modular structure supports extensibility, batch processing, and integration into experimental pipelines.
