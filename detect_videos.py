@@ -83,7 +83,14 @@ def process_video(video_path, output_dir, detector, predictor, save_raw=False, s
         pbar.close()
 
 
-def process_all_videos(video_dir, output_dir, model_path, save_raw=False, save_marked=False, max_workers=8):
+def process_all_videos(
+    video_dir, 
+    output_dir, 
+    model_path,
+    save_raw=False, 
+    save_marked=False, 
+    max_workers=8
+):
     create_output_dir(output_dir)
 
     video_files = sorted([

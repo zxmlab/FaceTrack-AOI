@@ -2,6 +2,15 @@ from collections import OrderedDict
 import cv2
 import numpy as np
 
+region_params = [
+        ("Face", 1.0, 1.0),
+        ("LeftEyebrow", 1.2, 1.2),
+        ("RightEyebrow", 1.2, 1.2),
+        ("LeftEye", 1.5, 2.0),
+        ("RightEye", 1.5, 2.0),
+        ("Nose", 2.0, 1.2),
+        ("Mouth", 1.3, 1.2)
+    ]
 
 def shape_to_list(shape):
     return [int(shape.part(i).x) if j % 2 == 0 else int(shape.part(i).y)
@@ -23,12 +32,12 @@ def scale_shape(shape, xscale, yscale):
 def visualize_facial_landmarks(image, shape, colors=None, alpha=0.75):
     FACIAL_LANDMARKS_INDEXES = OrderedDict([
         ("Face", (0, 17)),
-        ("Mouth", (48, 68)),
-        ("Right_Eyebrow", (17, 22)),
-        ("Left_Eyebrow", (22, 27)),
-        ("Right_Eye", (36, 42)),
-        ("Left_Eye", (42, 48)),
+        ("LeftEyebrow", (22, 27)),
+        ("RightEyebrow", (17, 22)),
+        ("LeftEye", (42, 48)),
+        ("RightEye", (36, 42)),
         ("Nose", (27, 36)),
+        ("Mouth", (48, 68)),
         ("Jaw", (0, 17))
     ])
 
@@ -41,27 +50,20 @@ def visualize_facial_landmarks(image, shape, colors=None, alpha=0.75):
     overlay = image.copy()
     output = image.copy()
 
-    SCALE_MAP = {
-        "Nose": (2.0, 1.2),
-        "Right_Eye": (1.5, 2.0),
-        "Left_Eye": (1.5, 2.0),
-        "Right_Eyebrow": (1.2, 1.2),
-        "Left_Eyebrow": (1.2, 1.2),
-        "Mouth": (1.3, 1.2)
-    }
+    SCALE_MAP = {name: (xscale, yscale) for name, xscale, yscale in region_params}
 
     for i, (name, (j, k)) in enumerate(FACIAL_LANDMARKS_INDEXES.items()):
         pts = shape[j:k]
         if name in SCALE_MAP:
             pts = scale_shape(pts, *SCALE_MAP[name])
-        elif name == "Face":
-            face_x_min, face_x_max = np.min(pts[:, 0]), np.max(pts[:, 0])
-            face_y_min, face_y_max = np.min(pts[:, 1]), np.max(pts[:, 1])
-            face_y_min -= (face_y_max - face_y_min)
-            pts = np.array([
-                [face_x_min, face_y_min], [face_x_min, face_y_max],
-                [face_x_max, face_y_max], [face_x_max, face_y_min]
-            ])
+            if name == "Face":
+                face_x_min, face_x_max = np.min(pts[:, 0]), np.max(pts[:, 0])
+                face_y_min, face_y_max = np.min(pts[:, 1]), np.max(pts[:, 1])
+                face_y_min -= (face_y_max - face_y_min)
+                pts = np.array([
+                    [face_x_min, face_y_min], [face_x_min, face_y_max],
+                    [face_x_max, face_y_max], [face_x_max, face_y_min]
+                ])
 
         # Draw landmark points
         for point in pts:

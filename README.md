@@ -1,7 +1,3 @@
-# FaceTrack-AOI
-
-An AI-Driven Tool for Automated Dynamic AOI Placement and Gaze Analysis in Facial Learning Studies
-
 ## Project Overview
 
 This project presents a modular toolkit for facial landmark detection and fixation analysis across both image and video formats. Designed with cognitive and behavioral research in mind—such as face perception, eye-tracking analysis, and attention modeling—the toolkit enables researchers to extract precise facial feature coordinates and compare them to gaze fixation data. The modular structure supports extensibility, batch processing, and integration into experimental pipelines.
@@ -9,6 +5,8 @@ This project presents a modular toolkit for facial landmark detection and fixati
 Eye-tracking studies involving human faces often require region-specific fixation analysis—e.g., determining whether fixations fall within the eyes, nose, or mouth. However, raw fixation coordinates are typically collected independently of facial feature segmentation. This toolkit bridges that gap by providing an automated pipeline to detect facial landmarks and compare them to fixation data on a frame-by-frame or image-by-image basis.
 
 The toolkit uses Dlib’s 68-point facial landmark model, which offers a balance between precision and computational cost. This makes it suitable for large-scale studies involving naturalistic stimuli such as social videos or spontaneous facial expressions.
+
+At present, the tool can only handle stimuli with a single face. In cases with multiple faces, it selects only the largest one.
 
 ## System Architecture
 
@@ -57,7 +55,7 @@ Since the predictor does not return a full-face bounding box, the jaw region is 
 | Nose     | 2.0                  | 1.2                  |
 | Mouth    | 1.3                  | 1.2                  |
 
-These values can be configured in the source code to suit different datasets.
+These values can be configured in the `main_module.py` to suit different datasets.
 
 ### Fixation Comparison
 
@@ -84,30 +82,88 @@ All required libraries can be installed via `pip`, and the model can be download
 
 ## Example Usage
 
-### Detect Facial Landmarks from Videos
+### Video Stimuli for EyeLink Experiment
+
+1. Detect Facial Landmarks
 
 ```python
 from detect_videos import process_all_videos
 
 process_all_videos(
-    video_dir="./videos",
-    output_dir="./landmark_csvs",
-    model_path="./shape_predictor_68_face_landmarks.dat",
-    save_raw=False,
-    save_marked=True
+    video_dir = "./videos",
+    output_dir = "./videos/output",
+    model_path = "./model/shape_predictor_68_face_landmarks.dat",
+    save_raw = True,
+    save_marked = True
 )
 ```
 
-### Compare Fixations to Facial Regions (Video)
+2. Compare Fixations to Facial Regions
 
 ```python
-from comparison_fixation_videos import process_fixation_videos
+from comparision_fixation_videos_eyelink import process_fixation_video
 
-process_fixation_videos(
-    fixation_path="./fixations.csv",
-    csvtable_dir="./landmark_csvs",
-    videofilter=".mp4",
-    output_path="./fixation_results.csv"
+process_fixation_video(
+    input_txt_path = "./video_fixation_data.txt",
+    input_CSVtable_dir = "./videos/output",
+    videofilter = ".mp4",
+    output_csv_path = "./output/output_video_fixation_data.csv"
+)
+```
+
+### Image Stimuli for EyeLink Experiment
+
+1. Detect Facial Landmarks
+
+```python
+from detect_images import process_images
+
+process_images(
+    image_dir = "./images",
+    output_dir = "./images/output",
+    model_path = "./model/shape_predictor_68_face_landmarks.dat",
+    save_marked = True
+)
+```
+
+2. Compare Fixations to Facial Regions
+
+```python
+from comparision_fixation_images_eyelink import process_fixation_image
+
+process_fixation_image(
+    input_txt_path = "./fixation_data.txt",
+    csvtable_path = "./images/output/all_landmarks.csv",
+    imagecolumn = "image_column",
+    output_path = "./output/output_fixation_data.csv",
+)
+```
+
+### Image Stimuli for Tobii Experiment
+
+1. Detect Facial Landmarks
+
+```python
+from detect_images import process_images
+
+process_images(
+    image_dir = "./images",
+    output_dir = "./images/output",
+    model_path = "./model/shape_predictor_68_face_landmarks.dat",
+    save_marked = True
+)
+```
+
+2. Compare Fixations to Facial Regions
+
+```python
+from comparision_fixation_images_tobii import process_fixation_image
+
+process_fixation_image(
+    input_folder = "./fixation_data",
+    output_folder = "./fixation_data/output",
+    csvtable_path = "./images/output/all_landmarks.csv",
+    imagecolumn = "Presented Media name"
 )
 ```
 
@@ -117,10 +173,10 @@ process_fixation_videos(
 from facial_video_processor import process_videos
 
 process_videos(
-    video_dir="./videos",
-    output_dir="./annotated_videos",
-    model_path="./shape_predictor_68_face_landmarks.dat",
-    max_workers=4
+    video_dir = "./videos",
+    output_dir = "./videos/annotated_videos",
+    model_path = "./shape_predictor_68_face_landmarks.dat",
+    max_workers = 4
 )
 ```
 
