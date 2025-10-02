@@ -1,0 +1,14 @@
+args
+attrs
+cmake
+Cython
+numpy
+numpydoc
+opencv-python
+Pillow
+ffpyplayer
+kivy
+pandas
+tqdm
+
+sudo apt install xclip

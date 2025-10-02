@@ -13,12 +13,14 @@ Root:
     tabVideos_chbx_save_marked_enable:tabVideos_chbx_save_marked_enable
     tabVideos_video1:tabVideos_video1
     tabVideos_video2:tabVideos_video2
-    progress_bar:progress_bar
-
+    tabVideos_Button_Process_and_Save:tabVideos_Button_Process_and_Save
+    tabVideos_label:tabVideos_label
    ## Image
     tabImage:tabImage
     tabImage_chbx_input_image_enable:tabImage_chbx_input_image_enable
     tabImage_txt_input_image_path:tabImage_txt_input_image_path
+    tabImage_chbx_image_column_enable:tabImage_chbx_image_column_enable
+    tabImage_txt_image_column:tabImage_txt_image_column
     tabImage_chbx_input_fixation_enable:tabImage_chbx_input_fixation_enable
     tabImage_txt_input_fixation_path:tabImage_txt_input_fixation_path
     tabImage_chbx_output_enable:tabImage_chbx_output_enable
@@ -27,6 +29,9 @@ Root:
     tabImage_chbx_save_marked_enable:tabImage_chbx_save_marked_enable
     tabImage_image1:tabImage_image1
     tabImage_image2:tabImage_image2
+    tabImage_Button_Process_and_Save:tabImage_Button_Process_and_Save
+    tabImage_label:tabImage_label
+
     
     do_default_tab: False
 
@@ -44,26 +49,21 @@ Root:
             BoxLayout:
                 size_hint_y: 1                     
                 Label:
+                    id: tabVideos_label
                     font_size: 40  # 单位px
-                    text: "Progress Bar (%): "
-                    markup: True
-                    
-                ProgressBar: 
-                    id: progress_bar
-                    max: 100  # 最大值设为100
-                    value: 50  # 当前值设为50，表示50%进度
-                    size_hint: (1, 1)              
+                    text: "Enter information to start"
+                    markup: True                  
             BoxLayout:
                 size_hint_y: 4
                 Video:
                     id:tabVideos_video1
-                    source: 'videos/M2H_1min.gif'  # JPG图片路径
+                    source: 'example_data/videos/M2H_1min.gif'  # JPG图片路径
                     state: 'play'
                     options: {'eos': 'loop'}
                     allow_stretch: True
                 Video:
                     id:tabVideos_video2
-                    source: 'videos/M2H_1min_withlandmrk.gif'  # JPG图片路径
+                    source: 'example_data/videos/M2H_1min_withlandmark.gif'  # JPG图片路径
                     state: 'play'
                     options: {'eos': 'loop'}
                     allow_stretch: True
@@ -143,6 +143,7 @@ Root:
             BoxLayout:
                 size_hint_y: 1 
                 Button:
+                    id: tabVideos_Button_Process_and_Save
                     font_size: 40  # 单位px
                     text: "Process and Save"
                     on_press: root.tabVideos_run_Process()
@@ -159,19 +160,25 @@ Root:
         on_press:root.tabImage_pressed_tabImage()
         BoxLayout:
             orientation: 'vertical'  
-                          
+            BoxLayout:
+                size_hint_y: 1                     
+                Label:
+                    id: tabImage_label
+                    font_size: 40  # 单位px
+                    text: "Enter information to start"
+                    markup: True                 
             BoxLayout:
                 size_hint_y: 5
                 Image:
                     id:tabImage_image1
-                    source: 'images/M2H_frame65.jpg'  # JPG图片路径
+                    source: 'example_data/images/M2H_frame65.jpg'  # JPG图片路径
                     allow_stretch: True  # 允许拉伸适应布局
                     #keep_ratio: True     # 保持宽高比
                     #size_hint: (1, 1)  # 设置图片大小比例
                     pos_hint: {'center_x': 0.5}  # 水平居中^3^^4^
                 Image:
                     id:tabImage_image2
-                    source: 'images/M2H_frame65_output.jpg'  # JPG图片路径
+                    source: 'example_data/images/M2H_frame65_output.jpg'  # JPG图片路径
                     allow_stretch: True  # 允许拉伸适应布局
                     #keep_ratio: True     # 保持宽高比
                     #size_hint: (1, 1)  # 设置图片大小比例
@@ -192,6 +199,24 @@ Root:
                     id: tabImage_txt_input_image_path
                     text:'click, then drag and drop'
                     on_focus: root.tabImage_on_focus_input_image()
+                    size_hint_x: 5 
+                    disabled:True 
+            BoxLayout:
+                size_hint_y: 1
+                CheckBox:
+                    id: tabImage_chbx_image_column_enable                    
+                    size_hint_x: 1
+                    active: False 
+                    on_release: root.tabImage_on_image_column_checkbox()             
+                Label:
+                    font_size: 40  # 单位px
+                    text : "Image Header"
+                    size_hint_x: 4
+                TextInput:
+                    font_size: 40  # 单位px 
+                    id: tabImage_txt_image_column
+                    text:'right'
+                    on_focus: root.tabImage_on_focus_image_column()
                     size_hint_x: 5 
                     disabled:True 
             BoxLayout:
@@ -253,6 +278,7 @@ Root:
             BoxLayout:
                 size_hint_y: 1
                 Button:
+                    id: tabImage_Button_Process_and_Save
                     font_size: 40  # 单位px
                     text: "Process and Save"
                     on_press: root.tabImage_run_Process()

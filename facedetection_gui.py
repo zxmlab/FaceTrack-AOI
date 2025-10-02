@@ -12,10 +12,12 @@ from kivy.uix.image import Image
 from kivy.uix.image import AsyncImage
 
 from detect_images import process_images
-from comparision_fixation_images import process_fixation_image
+from comparision_fixation_images_eyelink import process_fixation_image
 from detect_videos import process_all_videos
-from comparision_fixation_videos import process_fixation_video
+from comparision_fixation_videos_eyelink import process_fixation_video
 import time
+from threading import Thread
+from kivy.clock import Clock
 
 
 class LoadDialog(FloatLayout):
@@ -203,11 +205,16 @@ class Root(TabbedPanel):
 
     def tabVideos_run_Process(self):
         #        print(value)
+        self.tabVideos_Button_Process_and_Save.disabled=True
+        Thread(target=self.long_task).start()
+
+    def long_task(self):
+        # 耗时操作
         try:
-            print("start processing")
-            self.progress_bar.value=0
+            self.tabVideos_label.text="Processing started"
             if self.tabVideos_chbx_eyemovement_enable.active and self.tabVideos_chbx_video_enable.active:
                 print("start processing videos")
+                self.tabVideos_label.text="Processing video started"
                 process_all_videos(self.tabVideos_txt_video_input.text, 
                                 self.tabVideos_txt_output_path.text, 
                                 "./model/shape_predictor_68_face_landmarks.dat",
@@ -215,20 +222,23 @@ class Root(TabbedPanel):
                                 save_marked=self.tabVideos_chbx_save_marked_enable.active, 
                                 max_workers=8)
                 print("finish processing videos")
+                self.tabVideos_label.text="processing"
             ###
-            self.progress_bar.value=50
             if self.tabVideos_chbx_eyemovement_enable.active and self.tabVideos_chbx_output_enable.active:
                 print("start processing eyemovement data")
+                self.tabVideos_label.text=" Processing eyemovement data"
                 process_fixation_video(self.tabVideos_txt_eyemovement_input.text, 
                                       self.tabVideos_txt_output_path.text, 
                                       videofilter='.mp4', 
                                       output_csv_path=self.tabVideos_txt_output_path.text+"/eyemovement_video_comparison.csv")
                 print("finish processing eyemovement data")
-            self.progress_bar.value=100
-            print("finish processing")
+                self.tabVideos_label.text="finish processing eyemovement data"
+            self.tabVideos_Button_Process_and_Save.disabled=False
+            print("Finished!")
+            self.tabVideos_label.text="finish processing"
         except Exception as e:
             print(e)
-
+        
 
 
 
@@ -259,6 +269,27 @@ class Root(TabbedPanel):
                 #                print('Focused GT')
                 #                self.last_focused.text = 'click, then drag and drop'
                 self.last_focused = self.tabImage_txt_input_image_path
+        #                self.last_focused.text = 'drag and drop here'
+
+        #                print(self.last_focused.text)
+        except Exception as e:
+            print(e)
+
+    def tabImage_on_image_column_checkbox(self):
+        if self.tabImage_chbx_image_column_enable.active:
+            self.tabImage_txt_image_column.disabled = False
+            print('The checkbox is active')
+        else:
+            print('The checkbox is inactive')
+            self.tabImage_txt_image_column.disabled = True
+
+    def tabImage_on_focus_image_column(self):
+        #        print(value)
+        try:
+            if self.tabImage_txt_image_column.focus:
+                #                print('Focused GT')
+                #                self.last_focused.text = 'click, then drag and drop'
+                self.last_focused = self.tabImage_txt_image_column
         #                self.last_focused.text = 'drag and drop here'
 
         #                print(self.last_focused.text)
@@ -321,20 +352,27 @@ class Root(TabbedPanel):
             print('The checkbox is inactive')
 
     def tabImage_run_Process(self):
-        
-        try:
             print("start")
+            self.tabImage_label.text="Processing started"
+            self.tabImage_Button_Process_and_Save.disabled=True
+            Thread(target=self.image_long_task).start()
+
+    def image_long_task(self):
+        try:
             if self.tabImage_chbx_input_image_enable.active and self.tabImage_chbx_output_enable.active:
-                process_images(self.tabImage_txt_input_path.text,
+                self.tabImage_label.text="processing image data"
+                process_images(self.tabImage_txt_input_image_path.text,
                                 self.tabImage_txt_output_path.text,
                                 "./model/shape_predictor_68_face_landmarks.dat",
                                 save_marked=True)
+            
             if self.tabImage_chbx_output_enable.active and self.tabImage_chbx_input_fixation_enable.active:
+                self.tabImage_label.text="processing fixation data"
                 process_fixation_image(self.tabImage_txt_input_fixation_path.text, 
                                       self.tabImage_txt_output_path.text+"/all_landmarks.csv", 
-                                      'right', 
+                                      self.tabImage_txt_image_column.text, 
                                       output_path=self.tabImage_txt_output_path.text+"/eyemovement_image_comparison.csv")
-            
+            self.tabImage_Button_Process_and_Save.disabled=False
             
             
         #     marked_dir = os.path.join(self.tabImage_txt_output_path.text, "Marked")
@@ -346,12 +384,10 @@ class Root(TabbedPanel):
         #     if len(image_files)>0:
         #         self.tabImage_image.source=os.path.join(marked_dir, image_files[0])
            
-            print ("finish")
+            print ("Finish!")
+            self.tabImage_label.text="Finish!"
         except Exception as e:
             print(e)
-
-
-
 
 
 
