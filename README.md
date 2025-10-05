@@ -165,12 +165,15 @@ Use the `process_fixation_image` function in `comparision_fixation_images_eyelin
 
 #### Images (Tobii)
 
-Use the `process_fixation_image` function in `comparision_fixation_images_tobii.py` with the following additional parameters:
+Use the `process_fixation_image` function in `comparision_fixation_images_tobii.py` with the following parameters:
 
 | Parameter        | Description |
 |------------------|-------------|
 | `input_folder`   | Directory of fixation files |
 | `output_folder`  | Directory for output files |
+| `csvtable_path`  | Path to the facial landmarks CSV |
+| `imagecolumn`    | Column containing image filenames |
+| `y_adjust`       | Y-axis adjustment for EyeLink data |
 | `extensions`     | Fixation file extension |
 
 #### Videos (EyeLink)
@@ -196,9 +199,9 @@ Use the `process_fixation_video` function in `comparision_fixation_videos_eyelin
 
 #### Video Stimuli for EyeLink Experiment
 
-1. Detect Facial Landmarks
-
 ```python
+# 1. Detect Facial Landmarks
+
 from detect_videos import process_all_videos
 
 process_all_videos(
@@ -208,11 +211,9 @@ process_all_videos(
     save_raw = True,
     save_marked = True
 )
-```
 
-2. Compare Fixations to Facial Regions
+# 2. Compare Fixations to Facial Regions
 
-```python
 from comparision_fixation_videos_eyelink import process_fixation_video
 
 process_fixation_video(
@@ -225,9 +226,9 @@ process_fixation_video(
 
 #### Image Stimuli for EyeLink Experiment
 
-1. Detect Facial Landmarks
-
 ```python
+# 1. Detect Facial Landmarks
+
 from detect_images import process_images
 
 process_images(
@@ -236,11 +237,9 @@ process_images(
     model_path = "./model/shape_predictor_68_face_landmarks.dat",
     save_marked = True
 )
-```
 
-2. Compare Fixations to Facial Regions
+# 2. Compare Fixations to Facial Regions
 
-```python
 from comparision_fixation_images_eyelink import process_fixation_image
 
 process_fixation_image(
@@ -253,9 +252,9 @@ process_fixation_image(
 
 #### Image Stimuli for Tobii Experiment
 
-1. Detect Facial Landmarks
-
 ```python
+# 1. Detect Facial Landmarks
+
 from detect_images import process_images
 
 process_images(
@@ -264,11 +263,9 @@ process_images(
     model_path = "./model/shape_predictor_68_face_landmarks.dat",
     save_marked = True
 )
-```
 
-2. Compare Fixations to Facial Regions
+# 2. Compare Fixations to Facial Regions
 
-```python
 from comparision_fixation_images_tobii import process_fixation_image
 
 process_fixation_image(
