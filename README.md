@@ -107,7 +107,7 @@ The **Video** tab includes the following options:
 | `Save Raw Images`         | Save unprocessed video frames |
 | `Save Marked Images`      | Save AOI-marked video frames |
 
-After configuring the options, click ****Process and Save** to start processing. Click **Exit** to close the application.
+After configuring the options, click **Process and Save** to start processing. Click **Exit** to close the application.
 
 ---
 
