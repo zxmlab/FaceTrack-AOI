@@ -81,22 +81,53 @@ All required libraries can be installed via `pip`, and the model can be download
 
 ## Usage (for GUI user)
 
+To launch the GUI, run the following command in your terminal:
 
+```python
+python .\facedetection_gui.py
+```
 
+Here, `.\facedetection_gui.py` refers to the path of the script.
 
+After running the command, the GUI window will appear as shown below:
 
+---
 
+### Video Tab
 
+![Video Tab](https://zxmlab.github.io/FaceTrack-AOI/docs/Video_Tab.png)
 
+The **Video** tab includes the following options:
 
+| Options         | Description |
+|-----------------|-------------|
+| `Video Stimuli Directory` | Directory containing video files |
+| `Eyemovement Data`        | Path to fixation data file |
+| `Output Directory`        | Directory for saving results |
+| `Save Raw Images`         | Save unprocessed video frames |
+| `Save Marked Images`      | Save AOI-marked video frames |
 
+After configuring the options, click ****Process and Save** to start processing. Click **Exit** to close the application.
 
+---
 
+### Image Tab
 
+![Image Tab](https://zxmlab.github.io/FaceTrack-AOI/docs/Image_Tab.png)
 
+The **Image** tab provides the following options:
 
+| Options         | Description |
+|-----------------|-------------|
+| `Image file Directory`    | Directory containing image files |
+| `Image Header`            | Column name containing image filenames |
+| `Eyemovement file`        | Path to fixation data file |
+| `Output Directory`        | Directory for saving results |
+| `Save Raw Images`         | Save original images (this is an useless option)|
+| `Save Marked Images`      | Save AOI-marked images |
 
-
+After setting the parameters, click **Process and Save** to run the process.
+Click **Exit** to close the application.
 
 
 ## Usage (for Command-Line Users)
@@ -160,7 +191,7 @@ Use the `process_fixation_image` function in `comparision_fixation_images_eyelin
 |------------------|-------------|
 | `input_txt_path` | Path to the fixation file |
 | `csvtable_path`  | Path to the facial landmarks CSV |
-| `imagecolumn`    | Column containing image filenames |
+| `imagecolumn`    | Column name containing image filenames |
 | `output_path`    | Path to output file (e.g., `./output_fixation.txt`) |
 | `y_adjust`       | Y-axis adjustment for EyeLink data |
 
@@ -173,7 +204,7 @@ Use the `process_fixation_image` function in `comparision_fixation_images_tobii.
 | `input_folder`   | Directory of fixation files |
 | `output_folder`  | Directory for output files |
 | `csvtable_path`  | Path to the facial landmarks CSV |
-| `imagecolumn`    | Column containing image filenames |
+| `imagecolumn`    | Column name containing image filenames |
 | `y_adjust`       | Y-axis adjustment for EyeLink data |
 | `extensions`     | Fixation file extension |
 
