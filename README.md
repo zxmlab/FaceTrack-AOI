@@ -29,13 +29,14 @@ Each module is implemented as an independent component but shares a consistent i
 ### Fixation Data Format
 
 - **Required Fields**:
-  - `VIDEO_NAME_END` or `IMAGE_NAME_END`: filename reference
-  - `VIDEO_FRAME_INDEX_END`: (for video) specifies the frame to match
-  - `x`, `y`: fixation coordinate in pixels
+  - `VIDEO_NAME_END`: (for video) filename reference (EyeLink)
+  - `VIDEO_FRAME_INDEX_END`: (for video) specifies the frame to match (EyeLink)
+  - `CURRENT_FIX_X`, `CURRENT_FIX_Y`: fixation coordinate in pixels (EyeLink)
+  - `Fixation point X`, `Fixation point Y` fixation coordinate in pixels (Tobii)
 - **Output: New columns are added to fixation data**:
   - `CURRENT_IA_<region>`: binary indicator (1 = inside region, 0 = outside)
   - `CURRENT_Area_<region>`: pixel area of the region
-
+s
 ## Algorithmic Details
 
 ### Facial Landmark Detection
