@@ -95,7 +95,7 @@ After running the command, the GUI window will appear as shown below:
 
 ### Video Tab
 
-![Video Tab](https://zxmlab.github.io/FaceTrack-AOI/docs/Video_Tab.png)
+![Video Tab](docs/Video_Tab.png)
 
 The **Video** tab includes the following options:
 
@@ -113,7 +113,7 @@ After configuring the options, click ****Process and Save** to start processing.
 
 ### Image Tab
 
-![Image Tab](https://zxmlab.github.io/FaceTrack-AOI/docs/Image_Tab.png)
+![Image Tab](docs/Image_Tab.png)
 
 The **Image** tab provides the following options:
 
