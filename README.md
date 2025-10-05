@@ -2,9 +2,7 @@
 
 This project presents a modular toolkit for facial landmark detection and fixation analysis across both image and video formats. Designed with cognitive and behavioral research in mind—such as face perception, eye-tracking analysis, and attention modeling—the toolkit enables researchers to extract precise facial feature coordinates and compare them to gaze fixation data. The modular structure supports extensibility, batch processing, and integration into experimental pipelines.
 
-Eye-tracking studies involving human faces often require region-specific fixation analysis—e.g., determining whether fixations fall within the eyes, nose, or mouth. However, raw fixation coordinates are typically collected independently of facial feature segmentation. This toolkit bridges that gap by providing an automated pipeline to detect facial landmarks and compare them to fixation data on a frame-by-frame or image-by-image basis.
-
-The toolkit uses Dlib’s 68-point facial landmark model, which offers a balance between precision and computational cost. This makes it suitable for large-scale studies involving naturalistic stimuli such as social videos or spontaneous facial expressions.
+This toolkit uses Dlib’s 68-point facial landmark model, which offers a balance between precision and computational cost. This makes it suitable for large-scale studies involving naturalistic stimuli such as social videos or spontaneous facial expressions.
 
 At present, the tool can only handle stimuli with a single face. In cases with multiple faces, it selects only the largest one.
 
@@ -75,14 +73,128 @@ The `process_videos` function enables the generation of videos with overlaid fac
   - `pandas`
   - `tqdm` (for progress monitoring)
   - `moviepy`
-  - `kivy`
+  - `kivy` (for GUI)
 - **Pre-trained Model**: `shape_predictor_68_face_landmarks.dat` (Dlib)
 
 All required libraries can be installed via `pip`, and the model can be downloaded from the official Dlib repository.
 
-## Example Usage
+## Usage (for GUI user)
 
-### Video Stimuli for EyeLink Experiment
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Usage (for Command-Line Users)
+
+This toolkit is generally used in two steps:  
+1. Detect facial landmarks  
+2. Compare fixations to facial regions
+
+---
+
+### 1. Facial Landmark Detection
+
+We provide two modules for facial landmark detection:
+
+- **`detect_images.py`** — for static images  
+- **`detect_videos.py`** — for videos  
+
+#### Images
+
+Use the `process_images` function in `detect_images.py` with the following parameters:
+
+| Parameter      | Description |
+|----------------|-------------|
+| `image_dir`    | Directory of facial stimulus images |
+| `output_dir`   | Directory for output CSV files and optionally AOI-marked images (`save_marked=True`) |
+| `model_path`   | Path to the pre-trained model (e.g., `shape_predictor_68_face_landmarks.dat`) |
+| `save_marked`  | Whether to save AOI-marked images |
+
+#### Videos
+
+Use the `process_all_videos` function in `detect_videos.py` with these parameters:
+
+| Parameter       | Description |
+|-----------------|-------------|
+| `video_dir`     | Directory containing videos |
+| `output_dir`    | Directory for CSV outputs and optional images |
+| `model_path`    | Path to the pre-trained model |
+| `save_raw`      | Whether to save raw video frames |
+| `save_marked`   | Whether to save AOI-marked frames |
+| `max_workers`   | Maximum number of CPU workers |
+
+**Note:** The returned x- and y-coordinates are based on the original image or video size. For fixation comparison, you may need to restore the size and position of the image or video according to the experiment screen settings.
+
+---
+
+### 2. Fixation Comparison
+
+Three modules are provided to compare fixations with facial regions:
+
+- `comparision_fixation_images_eyelink.py`  
+- `comparision_fixation_images_tobii.py`  
+- `comparision_fixation_videos_eyelink.py`  
+
+These modules determine whether fixations fall within facial regions and return corresponding indicators along with the pixel area of each ergion.
+
+#### Images (EyeLink)
+
+Use the `process_fixation_image` function in `comparision_fixation_images_eyelink.py` with the following parameters:
+
+| Parameter        | Description |
+|------------------|-------------|
+| `input_txt_path` | Path to the fixation file |
+| `csvtable_path`  | Path to the facial landmarks CSV |
+| `imagecolumn`    | Column containing image filenames |
+| `output_path`    | Path to output file (e.g., `./output_fixation.txt`) |
+| `y_adjust`       | Y-axis adjustment for EyeLink data |
+
+#### Images (Tobii)
+
+Use the `process_fixation_image` function in `comparision_fixation_images_tobii.py` with the following additional parameters:
+
+| Parameter        | Description |
+|------------------|-------------|
+| `input_folder`   | Directory of fixation files |
+| `output_folder`  | Directory for output files |
+| `extensions`     | Fixation file extension |
+
+#### Videos (EyeLink)
+
+Use the `process_fixation_video` function in `comparision_fixation_videos_eyelink.py` with the following parameters:
+
+| Parameter           | Description |
+|---------------------|-------------|
+| `input_txt_path`    | Path to fixation file |
+| `input_CSVtable_dir`| Directory of facial landmark CSVs |
+| `videofilter`       | Video file extension |
+| `output_csv_path`   | Path to output file (e.g., `./output_fixation.txt`) |
+| `y_adjust`          | Y-axis adjustment for EyeLink data |
+
+#### Fixation File Formats
+
+- **EyeLink:** Tab-separated text file  
+- **Tobii:** Tab-separated text file with `.tsv` extension
+
+---
+
+### Example Usages
+
+#### Video Stimuli for EyeLink Experiment
 
 1. Detect Facial Landmarks
 
@@ -111,7 +223,7 @@ process_fixation_video(
 )
 ```
 
-### Image Stimuli for EyeLink Experiment
+#### Image Stimuli for EyeLink Experiment
 
 1. Detect Facial Landmarks
 
@@ -139,7 +251,7 @@ process_fixation_image(
 )
 ```
 
-### Image Stimuli for Tobii Experiment
+#### Image Stimuli for Tobii Experiment
 
 1. Detect Facial Landmarks
 
@@ -167,7 +279,7 @@ process_fixation_image(
 )
 ```
 
-### Generate Annotated Videos
+#### Generate Annotated Videos
 
 ```python
 from facial_video_processor import process_videos
