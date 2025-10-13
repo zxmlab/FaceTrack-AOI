@@ -113,8 +113,7 @@ import numpy, cv2, dlib, pandas, tqdm, moviepy, kivy
 ```
 
 ## Usage (for GUI user)
-
-To launch the GUI, run the following command in the `facetrack` enviroment terminal:
+At present, the GUI handles only EyeLink fixation data. Launch it by running the following command in the `facetrack` environment terminal:
 
 ```bash
 python .\facedetection_gui.py
