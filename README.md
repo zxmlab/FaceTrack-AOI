@@ -18,25 +18,7 @@ The system is divided into five major functional modules:
 
 Each module is implemented as an independent component but shares a consistent internal pipeline. All landmark detection operations are built on top of Dlib’s face detector and shape predictor, while video I/O tasks rely on OpenCV.
 
-## Input and Output Formats
 
-### Facial Landmark CSV Files
-
-- **Input**: Video or image files
-- **Output**: A `.csv` file per video or a combined `.csv` for images
-- **Fields**: Frame index (or image name), coordinates of each facial landmark point
-
-### Fixation Data Format
-
-- **Required Fields**:
-  - `VIDEO_NAME_END`: (for video) filename reference (EyeLink)
-  - `VIDEO_FRAME_INDEX_END`: (for video) specifies the frame to match (EyeLink)
-  - `CURRENT_FIX_X`, `CURRENT_FIX_Y`: fixation coordinate in pixels (EyeLink)
-  - `Fixation point X`, `Fixation point Y` fixation coordinate in pixels (Tobii)
-- **Output: New columns are added to fixation data**:
-  - `CURRENT_IA_<region>`: binary indicator (1 = inside region, 0 = outside)
-  - `CURRENT_Area_<region>`: pixel area of the region
-s
 ## Algorithmic Details
 
 ### Facial Landmark Detection
@@ -60,7 +42,7 @@ These values can be configured in the `main_module.py` to suit different dataset
 
 Each fixation coordinate is compared against the bounding box of each facial region. Binary inclusion results are recorded, and pixel areas of the regions are calculated for further analysis (e.g., area normalization of fixation counts).
 
-## Annotated Video Generation
+### Annotated Video Generation
 
 The `process_videos` function enables the generation of videos with overlaid facial landmarks. It leverages OpenCV’s `cv2.VideoWriter` to write frame-by-frame annotated outputs. Multithreading is supported via the `max_workers` parameter to facilitate parallel processing of video batches.
 
@@ -79,11 +61,62 @@ The `process_videos` function enables the generation of videos with overlaid fac
 
 All required libraries can be installed via `pip`, and the model can be downloaded from the official Dlib repository.
 
+## Input and Output Formats
+
+### Facial Landmark CSV Files
+
+- **Input**: Video or image files (file type can be specified via command-line options; see below).
+- **Output**: One `.csv` file per video, or a single `.csv` for multiple images.
+- **Output Fields**: Frame index (or image name) and the coordinates of each facial landmark point.
+
+### Fixation Data Format
+Fixation data must be provided as a tab-separated file, exported either from DataViewer or Tobii Pro Lab.
+
+#### DataViewer Export
+Required Fields:
+  - `CURRENT_FIX_X` and `CURRENT_FIX_Y`: fixation coordinate in pixels;
+  - `VIDEO_NAME_END` and  `VIDEO_FRAME_INDEX_END`: for video filename and frame index reference;
+  - Or a column containing image names.
+
+#### Tobii Pro Lab Export
+Required Fields:
+  - `Fixation point X` and `Fixation point Y`: fixation coordinate in pixels;
+  - A column containing video or image names (e.g., `Presented Media name`).
+
+#### Output
+The processed fixation file will include additional columns:
+  - `CURRENT_IA_<region>`: Binary indicator (1 = inside region, 0 = outside);
+  - `CURRENT_Area_<region>`: Pixel area of the region.
+
+
+## Installation
+Before running the GUI or command-line version of FaceTrack-AOI, you need to set up the runtime environment. We strongly recommend using a virtual environment to keep dependencies isolated and manageable. Below is an example setup using Miniconda:
+
+1. Download and install [Miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main).
+2. Open the Anaconda Prompt and create a new environment (e.g., named `facetrack`):
+```bash
+conda create -n facetrack python
+```
+3. Activate the `facetrack` environment:
+```bash
+conda activate facetrack
+```
+4. Install required dependencies:
+```bash
+conda install numpy pandas tqdm
+conda install -c conda-forge opencv dlib moviepy
+conda install -c conda-forge kivy
+```
+5. Launch Python in this environment and run the following command to confirm all dependencies were installed successfully:
+```python
+import numpy, cv2, dlib, pandas, tqdm, moviepy, kivy
+```
+
 ## Usage (for GUI user)
 
-To launch the GUI, run the following command in your terminal:
+To launch the GUI, run the following command in the `facetrack` enviroment terminal:
 
-```python
+```bash
 python .\facedetection_gui.py
 ```
 
