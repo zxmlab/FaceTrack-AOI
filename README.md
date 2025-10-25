@@ -112,6 +112,13 @@ conda install -c conda-forge kivy
 import numpy, cv2, dlib, pandas, tqdm, moviepy, kivy
 ```
 
+6. If it fails, you can reopen the Anaconda Prompt, remove the `facetrack` environment, and recreate it using the following command:
+```
+conda remove -n facetrack --all
+conda create -n facetrack python=3.11 numpy pandas tqdm opencv dlib moviepy kivy -c conda-forge
+conda activate facetrack
+```
+
 ## Usage (for GUI user)
 At present, the GUI handles only EyeLink fixation data. Launch it by running the following command in the `facetrack` environment terminal:
 
