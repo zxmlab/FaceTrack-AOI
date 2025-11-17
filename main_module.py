@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 region_params = [
-        ("Face", 1.0, 1.0),
+        ("Face", 1.2, 1.2),
         ("LeftEyebrow", 1.2, 1.2),
         ("RightEyebrow", 1.2, 1.2),
         ("LeftEye", 1.5, 2.0),
@@ -51,7 +51,14 @@ def visualize_facial_landmarks(image, shape, colors=None, alpha=0.75):
     output = image.copy()
 
     SCALE_MAP = {name: (xscale, yscale) for name, xscale, yscale in region_params}
-
+    pts_middle = np.array([
+                    [0, 0], [0, 0],
+                    [0, 0], [0, 0]
+                ])
+    new_eye_pts = np.array([
+                    [0, 0], [0, 0],
+                    [0, 0], [0, 0]
+                ])
     for i, (name, (j, k)) in enumerate(FACIAL_LANDMARKS_INDEXES.items()):
         pts = shape[j:k]
         if name in SCALE_MAP:
@@ -64,7 +71,24 @@ def visualize_facial_landmarks(image, shape, colors=None, alpha=0.75):
                     [face_x_min, face_y_min], [face_x_min, face_y_max],
                     [face_x_max, face_y_max], [face_x_max, face_y_min]
                 ])
-
+                pts_middle = np.array([
+                    [int((face_x_min+face_x_max)/2), face_y_min], [int((face_x_min+face_x_max)/2), face_y_max],
+                    [face_x_min, int((face_y_min+face_y_max)/2)], [face_x_max, int((face_y_min+face_y_max)/2)]
+                ])
+            if name == "LeftEyebrow":
+                new_array =pts
+            if name == "RightEyebrow":
+                new_array = np.vstack((new_array, pts))
+            if name == "LeftEye":
+                new_array = np.vstack((new_array, pts))
+            if name == "RightEye":
+                new_array = np.vstack((new_array, pts))
+                eye_x_min, eye_x_max = np.min(new_array[:, 0]), np.max(new_array[:, 0])
+                eye_y_min, eye_y_max = np.min(new_array[:, 1]), np.max(new_array[:, 1])
+                new_eye_pts = np.array([
+                    [eye_x_min, eye_y_min], [eye_x_min, eye_y_max],
+                    [eye_x_max, eye_y_max], [eye_x_max, eye_y_min]
+                ])
         # Draw landmark points
         for point in pts:
             cv2.circle(overlay, tuple(point), radius=3, color=(255, 0, 0), thickness=-1)
@@ -74,10 +98,17 @@ def visualize_facial_landmarks(image, shape, colors=None, alpha=0.75):
             for l in range(1, len(pts)):
                 cv2.line(overlay, tuple(pts[l - 1]), tuple(pts[l]), colors[i], 2)
         elif name == "Face":
-            cv2.rectangle(overlay, tuple(pts[0]), tuple(pts[2]), colors[i], 2)
+            # cv2.rectangle(overlay, tuple(pts[0]), tuple(pts[2]), colors[i], 2)
+            ##
+            # cv2.rectangle(overlay, tuple(pts[0]), tuple(pts_middle[1]), colors[i], 2)
+            # cv2.rectangle(overlay, tuple(pts_middle[0]), tuple(pts[2]), colors[i+1], 2)
+            ##
+            cv2.rectangle(overlay, tuple(pts[0]), tuple(pts_middle[3]), colors[i], 4)
+            cv2.rectangle(overlay, tuple(pts_middle[2]), tuple(pts[2]), colors[i+1], 4)
         else:
             hull = cv2.convexHull(pts)
             cv2.drawContours(overlay, [hull], -1, colors[i], -1)
-
+        # if name == "RightEye":
+        #     cv2.rectangle(overlay, tuple(new_eye_pts[0]), tuple(new_eye_pts[2]), colors[i], 2)
     cv2.addWeighted(overlay, alpha, output, 1 - alpha, 0, output)
     return output

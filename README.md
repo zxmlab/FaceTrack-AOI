@@ -134,7 +134,7 @@ After running the command, the GUI window will appear as shown below:
 
 ### Video Tab
 
-![Video Tab](docs/Video_Tab.png)
+![Video Tab](docs/Video_Tab.gif)
 
 The **Video** tab includes the following options:
 
