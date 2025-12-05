@@ -12,7 +12,10 @@ conda activate facetrack
 ```
 4. Install required packages
 ```
-conda install numpy pandas tqdm opencv dlib moviepy kivy ffpyplayer -c conda-forge
+conda install numpy pandas tqdm
+conda install -c conda-forge opencv dlib moviepy
+conda install -c conda-forge kivy
+conda install -c conda-forge ffpyplayer
 ```
 5. Verify installation (run in Python shell)
 ```
@@ -22,6 +25,6 @@ import numpy, cv2, dlib, pandas, tqdm, moviepy, kivy, ffpyplayer
 6. If installation fails, close and reopen the Miniconda terminal, then reconfigure using:
 ```
 conda remove -n facetrack --all
-conda create -n facetrack python=3.13 numpy pandas tqdm opencv dlib moviepy kivy ffpyplayer -c conda-forge
+conda create -n facetrack python=3.13 numpy pandas tqdm opencv dlib moviepy kivy -c conda-forge
 conda activate facetrack
 ```
