@@ -108,7 +108,10 @@ conda activate facetrack
 ```
 4. Install required dependencies:
 ```bash
-conda install numpy pandas tqdm opencv dlib moviepy kivy ffpyplayer -c conda-forge
+conda install numpy pandas tqdm
+conda install -c conda-forge opencv dlib moviepy
+conda install -c conda-forge kivy
+conda install -c conda-forge ffpyplayer
 ```
 5. Launch Python in this environment and run the following command to confirm all dependencies were installed successfully:
 ```python
