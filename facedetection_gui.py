@@ -12,13 +12,17 @@ from kivy.uix.image import Image
 from kivy.uix.image import AsyncImage
 
 from detect_images import process_images
-from comparision_fixation_images_eyelink import process_fixation_image
 from detect_videos import process_all_videos
-from comparision_fixation_videos_eyelink import process_fixation_video
+from comparision_fixation_images import process_fixation_image
+from comparision_fixation_videos import process_fixation_video
 import time
 from threading import Thread
 from kivy.clock import Clock
 
+import os
+from kivy.app import App
+from kivy.lang import Builder
+from kivy.properties import StringProperty
 
 class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
@@ -219,8 +223,8 @@ class Root(TabbedPanel):
                                 self.tabVideos_txt_output_path.text, 
                                 "./model/shape_predictor_68_face_landmarks.dat",
                                 save_raw=self.tabVideos_chbx_save_raw_enable.active, 
-                                save_marked=self.tabVideos_chbx_save_marked_enable.active, 
-                                max_workers=8)
+                                save_marked=self.tabVideos_chbx_save_marked_enable.active
+                                )
                 print("finish processing videos")
                 self.tabVideos_label.text="processing"
             ###
@@ -229,8 +233,8 @@ class Root(TabbedPanel):
                 self.tabVideos_label.text=" Processing eyemovement data"
                 process_fixation_video(self.tabVideos_txt_eyemovement_input.text, 
                                       self.tabVideos_txt_output_path.text, 
-                                      videofilter='.mp4', 
-                                      output_csv_path=self.tabVideos_txt_output_path.text+"/eyemovement_video_comparison.csv")
+                                      video_filter='.mp4', 
+                                      output_path=self.tabVideos_txt_output_path.text+"/eyemovement_video_comparison.csv")
                 print("finish processing eyemovement data")
                 self.tabVideos_label.text="finish processing eyemovement data"
             self.tabVideos_Button_Process_and_Save.disabled=False
@@ -338,11 +342,7 @@ class Root(TabbedPanel):
         except Exception as e:
             print(e)
 
-    def tabImage_on_save_raw_checkbox(self):
-        if self.tabImage_chbx_save_raw_enable.active:
-            print('The checkbox is active')
-        else:
-            print('The checkbox is inactive')
+
 
 
     def tabImage_on_save_marked_checkbox(self):
@@ -369,7 +369,7 @@ class Root(TabbedPanel):
             if self.tabImage_chbx_output_enable.active and self.tabImage_chbx_input_fixation_enable.active:
                 self.tabImage_label.text="processing fixation data"
                 process_fixation_image(self.tabImage_txt_input_fixation_path.text, 
-                                      self.tabImage_txt_output_path.text+"/all_landmarks.csv", 
+                                      self.tabImage_txt_output_path.text+"/landmarks.csv", 
                                       self.tabImage_txt_image_column.text, 
                                       output_path=self.tabImage_txt_output_path.text+"/eyemovement_image_comparison.csv")
             self.tabImage_Button_Process_and_Save.disabled=False
@@ -408,11 +408,28 @@ class Root(TabbedPanel):
 
             
 class DAOI(App):
+    image1_path = StringProperty('')
+    image2_path = StringProperty('')
+    video1_path = StringProperty('')
+    video2_path = StringProperty('')
     
     def build(self):
         Window.bind(on_dropfile=self._on_file_drop)
         self.title = 'FaceTrack-AOI'
-        Window.size = (1000,1000)
+        Window.size = (600, 600)
+        
+        base = os.path.dirname(os.path.abspath(__file__))
+        image1 = os.path.join(base, 'gui', 'images', 'M2H_frame65.jpg')
+        image2 = os.path.join(base, 'gui', 'images', 'M2H_frame65_output.jpg')
+        video1 = os.path.join(base, 'gui', 'videos', 'M2H_1min.mp4')
+        video2 = os.path.join(base, 'gui', 'videos', 'M2H_1min_withlandmark.mp4')
+
+        self.image1_path = image1
+        self.image2_path = image2
+        self.video1_path = video1
+        self.video2_path = video2
+
+        return Builder.load_file("daoi.kv")
        
     
     def _on_file_drop(self, window, file_path):
@@ -420,7 +437,7 @@ class DAOI(App):
 #        Root = Factory.Root()
         
 #        print(Root.last_focused.text)
-##        self.Root
+#        self.Root
         try:
 #            print(dir(self))
 #            print(dir(self.root))
@@ -432,6 +449,7 @@ class DAOI(App):
         except Exception as e:
             print(e)
         return
+
 
 Factory.register('Root', cls=Root)
 Factory.register('LoadDialog', cls=LoadDialog)

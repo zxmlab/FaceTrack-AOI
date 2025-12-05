@@ -16,7 +16,7 @@ The system is divided into five major functional modules:
 4. **Fixation Comparison in Images**
 5. **Annotated Video Generation with Facial Features**
 
-Each module is implemented as an independent component but shares a consistent internal pipeline. All landmark detection operations are built on top of Dlib’s face detector and shape predictor, while video I/O tasks rely on OpenCV.
+Each module is implemented as an independent component but shares a consistent internal pipeline. All landmark detection operations are built on top of Dlib’s face detector and shape predictor, while video input/output tasks rely on OpenCV.
 
 
 ## Algorithmic Details
@@ -27,16 +27,18 @@ Facial landmarks are extracted using the `shape_predictor_68_face_landmarks.dat`
 
 ### Region Construction
 
-Since the predictor does not return a full-face bounding box, the jaw region is used to estimate facial boundaries. The minimal enclosing rectangle of the jaw is extended vertically to include upper facial regions. Additional bounding boxes are generated around each region of interest using empirically chosen amplification factors:
+Since the predictor does not return a full-face bounding box, the face regions is used to estimate facial boundaries. The minimal enclosing rectangle of the face regions is extended vertically (a jaw height) to include upper facial regions. Additional bounding boxes are generated around each region of interest using empirically chosen amplification factors:
 
 | Region   | X-axis Amplification | Y-axis Amplification |
 | -------- | -------------------- | -------------------- |
 | Eyebrows | 1.2                  | 1.2                  |
-| Eyes     | 1.5                  | 2.0                  |
+| Eyes     | 1.8                  | 2.5                  |
 | Nose     | 2.0                  | 1.2                  |
 | Mouth    | 1.3                  | 1.2                  |
 
-These values can be configured in the `main_module.py` to suit different datasets.
+These values can be configured in the `main_module.py` to suit different datasets. We also provide a function that enables the enlargement of an AOI based on a specified magnified visual angle, which can be activated by setting `use_degree=True` in the `return_scaled_shape` function in the `main_module.py`.
+
+Besides, researchers can customize their own area of interest by modifying `REGIONS` and `return_scaled_shape` in the `main_module.py`.
 
 ### Fixation Comparison
 
@@ -57,6 +59,7 @@ The `process_videos` function enables the generation of videos with overlaid fac
   - `tqdm` (for progress monitoring)
   - `moviepy`
   - `kivy` (for GUI)
+  - `ffpyplayer` (for GUI)
 - **Pre-trained Model**: `shape_predictor_68_face_landmarks.dat` (Dlib)
 
 All required libraries can be installed via `pip`, and the model can be downloaded from the official Dlib repository.
@@ -70,7 +73,9 @@ All required libraries can be installed via `pip`, and the model can be download
 - **Output Fields**: Frame index (or image name) and the coordinates of each facial landmark point.
 
 ### Fixation Data Format
-Fixation data must be provided as a tab-separated file, exported either from DataViewer or Tobii Pro Lab.
+The tool works with typical eye-tracking data exported from commercial eye-trackers (e.g., Eyelink, Tobii) and custom experimental setups, as long as the data includes the requisite spatial and temporal fields for analysis. 
+corresponding eye movement data exported from the vendor's exported files (e.g., fixation reports exported from Eyelink DataViewer or Tobii Pro Lab) or custom data. The input data must be a tab-delimited file containing the gaze point coordinates (X and Y) as well as task-specific fields—for example, video-based datasets require columns for the video name and frame index, whereas image-based datasets require a column indicating the image name (see example data for details). 
+
 
 #### DataViewer Export
 Required Fields:
@@ -92,8 +97,8 @@ The processed fixation file will include additional columns:
 ## Installation
 Before running the GUI or command-line version of FaceTrack-AOI, you need to set up the runtime environment. We strongly recommend using a virtual environment to keep dependencies isolated and manageable. Below is an example setup using Miniconda:
 
-1. Download and install [Miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main).
-2. Open the Anaconda Prompt and create a new environment (e.g., named `facetrack`):
+1. Install [Miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main).
+2. Open the Anaconda Prompt and create a new virtual environment (e.g., named `facetrack`):
 ```bash
 conda create -n facetrack python
 ```
@@ -103,19 +108,17 @@ conda activate facetrack
 ```
 4. Install required dependencies:
 ```bash
-conda install numpy pandas tqdm
-conda install -c conda-forge opencv dlib moviepy
-conda install -c conda-forge kivy
+conda install numpy pandas tqdm opencv dlib moviepy kivy ffpyplayer -c conda-forge
 ```
 5. Launch Python in this environment and run the following command to confirm all dependencies were installed successfully:
 ```python
 import numpy, cv2, dlib, pandas, tqdm, moviepy, kivy
 ```
 
-6. If it fails, you can reopen the Anaconda Prompt, remove the `facetrack` environment, and recreate it using the following command:
+6. If installation fails, close and reopen the Miniconda terminal, then reconfigure using:
 ```
 conda remove -n facetrack --all
-conda create -n facetrack python=3.11 numpy pandas tqdm opencv dlib moviepy kivy -c conda-forge
+conda create -n facetrack python=3.13 numpy pandas tqdm opencv dlib moviepy kivy -c conda-forge
 conda activate facetrack
 ```
 
@@ -123,10 +126,10 @@ conda activate facetrack
 At present, the GUI handles only EyeLink fixation data. Launch it by running the following command in the `facetrack` environment terminal:
 
 ```bash
-python .\facedetection_gui.py
+python ./facedetection_gui.py
 ```
 
-Here, `.\facedetection_gui.py` refers to the path of the script.
+Here, `./facedetection_gui.py` refers to the path of the script.
 
 After running the command, the GUI window will appear as shown below:
 
@@ -159,10 +162,9 @@ The **Image** tab provides the following options:
 | Options         | Description |
 |-----------------|-------------|
 | `Image file Directory`    | Directory containing image files |
-| `Image Header`            | Column name containing image filenames |
+| `Image Header`            | The name of the column containing image filenames (no need to add quotes) |
 | `Eyemovement file`        | Path to fixation data file |
 | `Output Directory`        | Directory for saving results |
-| `Save Raw Images`         | Save original images (this is an useless option)|
 | `Save Marked Images`      | Save AOI-marked images |
 
 After setting the parameters, click **Process and Save** to run the process.
@@ -172,8 +174,8 @@ Click **Exit** to close the application.
 ## Usage (for Command-Line Users)
 
 This toolkit is generally used in two steps:  
-1. Detect facial landmarks  
-2. Compare fixations to facial regions
+1. Detect facial landmarks
+2. Compare fixations/gaze to facial regions
 
 ---
 
@@ -181,8 +183,8 @@ This toolkit is generally used in two steps:
 
 We provide two modules for facial landmark detection:
 
-- **`detect_images.py`** — for static images  
-- **`detect_videos.py`** — for videos  
+- **`detect_images.py`** — for static images
+- **`detect_videos.py`** — for videos
 
 #### Images
 
@@ -193,7 +195,7 @@ Use the `process_images` function in `detect_images.py` with the following param
 | `image_dir`    | Directory of facial stimulus images |
 | `output_dir`   | Directory for output CSV files and optionally AOI-marked images (`save_marked=True`) |
 | `model_path`   | Path to the pre-trained model (e.g., `shape_predictor_68_face_landmarks.dat`) |
-| `save_marked`  | Whether to save AOI-marked images |
+| `save_marked`  | Whether to save AOI-marked images (set to `False` by default)|
 
 #### Videos
 
@@ -204,9 +206,9 @@ Use the `process_all_videos` function in `detect_videos.py` with these parameter
 | `video_dir`     | Directory containing videos |
 | `output_dir`    | Directory for CSV outputs and optional images |
 | `model_path`    | Path to the pre-trained model |
-| `save_raw`      | Whether to save raw video frames |
-| `save_marked`   | Whether to save AOI-marked frames |
-| `max_workers`   | Maximum number of CPU workers |
+| `save_raw`      | Whether to save raw video frames (set to `False` by default) |
+| `save_marked`   | Whether to save AOI-marked frames (set to `False` by default) |
+| `max_workers`   | Maximum number of CPU workers (set to `8` by default) |
 
 **Note:** The returned x- and y-coordinates are based on the original image or video size. For fixation comparison, you may need to restore the size and position of the image or video according to the experiment screen settings.
 
@@ -214,136 +216,104 @@ Use the `process_all_videos` function in `detect_videos.py` with these parameter
 
 ### 2. Fixation Comparison
 
-Three modules are provided to compare fixations with facial regions:
+Two modules are provided to compare fixations with facial regions:
 
-- `comparision_fixation_images_eyelink.py`  
-- `comparision_fixation_images_tobii.py`  
-- `comparision_fixation_videos_eyelink.py`  
+- `comparision_fixation_images.py`  — for image stimuli experiment
+- `comparision_fixation_videos.py`  — for video stimuli experiment
 
-These modules determine whether fixations fall within facial regions and return corresponding indicators along with the pixel area of each ergion.
+These two modules determine whether fixations fall within facial regions and return corresponding indicators along with the pixel area of each ergion.
 
-#### Images (EyeLink)
+#### Images
 
-Use the `process_fixation_image` function in `comparision_fixation_images_eyelink.py` with the following parameters:
-
-| Parameter        | Description |
-|------------------|-------------|
-| `input_txt_path` | Path to the fixation file |
-| `csvtable_path`  | Path to the facial landmarks CSV |
-| `imagecolumn`    | Column name containing image filenames |
-| `output_path`    | Path to output file (e.g., `./output_fixation.txt`) |
-| `y_adjust`       | Y-axis adjustment for EyeLink data |
-
-#### Images (Tobii)
-
-Use the `process_fixation_image` function in `comparision_fixation_images_tobii.py` with the following parameters:
+Use the `process_fixation_image` function in `comparision_fixation_images.py` with the following parameters:
 
 | Parameter        | Description |
 |------------------|-------------|
-| `input_folder`   | Directory of fixation files |
-| `output_folder`  | Directory for output files |
+| `input_path`     | Path to the fixation file |
 | `csvtable_path`  | Path to the facial landmarks CSV |
-| `imagecolumn`    | Column name containing image filenames |
-| `y_adjust`       | Y-axis adjustment for EyeLink data |
-| `extensions`     | Fixation file extension |
+| `image_column`   | The name of the column containing image filenames |
+| `fix_x_column`   | The name of the column containing the X-axis coordinates (set to `"CURRENT_FIX_X"` by default) |
+| `fix_y_column`   | The name of the column containing the Y-axis coordinates (set to `"CURRENT_FIX_Y"` by default) |
+| `output_path`    | Path to output file |
 
-#### Videos (EyeLink)
+#### Videos
 
-Use the `process_fixation_video` function in `comparision_fixation_videos_eyelink.py` with the following parameters:
+Use the `process_fixation_video` function in `comparision_fixation_videos.py` with the following parameters:
 
 | Parameter           | Description |
 |---------------------|-------------|
-| `input_txt_path`    | Path to fixation file |
-| `input_CSVtable_dir`| Directory of facial landmark CSVs |
-| `videofilter`       | Video file extension |
-| `output_csv_path`   | Path to output file (e.g., `./output_fixation.txt`) |
-| `y_adjust`          | Y-axis adjustment for EyeLink data |
+| `input_path`        | Path to fixation file |
+| `csvtable_dir`      | Directory of facial landmark CSVs |
+| `fix_x_column`      | The name of the column containing the X-axis coordinates (set to `"CURRENT_FIX_X"` by default) |
+| `fix_y_column`      | The name of the column containing the Y-axis coordinates (set to `"CURRENT_FIX_Y"` by default) |
+| `video_name_column` | The name of the column containing the video names (set to `"VIDEO_NAME_END"` by default) |
+| `frame_index_column`| The name of the column containing the video frame index (set to `"VIDEO_FRAME_INDEX_END"` by default) |
+| `video_filter`      | Video file extension |
+| `output_path`       | Path to output file |
 
-#### Fixation File Formats
-
-- **EyeLink:** Tab-separated text file  
-- **Tobii:** Tab-separated text file with `.tsv` extension
+These column names are configured for EyeLink DataViewer exports. If your data file uses different column names, update the corresponding parameters accordingly.
 
 ---
 
 ### Example Usages
 
-#### Video Stimuli for EyeLink Experiment
+#### Image Stimuli Experiment
 
 ```python
-# 1. Detect Facial Landmarks
+# Step 1: Detect Facial Landmarks
+
+from detect_images import process_images
+
+process_images(
+    image_dir = "./example_data/EyeLink/Images",
+    output_dir = "./example_data/EyeLink/Images/output",
+    model_path = "./model/shape_predictor_68_face_landmarks.dat",
+    save_marked = True
+)
+
+# Step 2: Compare Fixations to Facial Regions
+
+from comparision_fixation_images import process_fixation_image
+
+process_fixation_image(
+    input_path = "./example_data/EyeLink/fixation_data/fixation_data_image.txt",
+    csvtable_path = "./example_data/EyeLink/Images/output/landmarks.csv",
+    image_column = "Image_Column",
+    fix_x_column = "CURRENT_FIX_X",
+    fix_y_column = "CURRENT_FIX_Y",
+    output_path = "./example_data/EyeLink/fixation_data/output/fixation_data_image_out.csv",
+)
+```
+
+#### Video Stimuli Experiment
+
+```python
+# Step 1: Detect Facial Landmarks
 
 from detect_videos import process_all_videos
 
 process_all_videos(
-    video_dir = "./videos",
-    output_dir = "./videos/output",
+    video_dir = "./example_data/EyeLink/videos",
+    output_dir = "./example_data/EyeLink/videos/output",
     model_path = "./model/shape_predictor_68_face_landmarks.dat",
     save_raw = True,
-    save_marked = True
+    save_marked = True,
+    max_workers = 8
 )
 
-# 2. Compare Fixations to Facial Regions
+# Step 2: Compare Fixations to Facial Regions
 
-from comparision_fixation_videos_eyelink import process_fixation_video
+from comparision_fixation_videos import process_fixation_video
 
 process_fixation_video(
-    input_txt_path = "./video_fixation_data.txt",
-    input_CSVtable_dir = "./videos/output",
-    videofilter = ".mp4",
-    output_csv_path = "./output/output_video_fixation_data.csv"
-)
-```
-
-#### Image Stimuli for EyeLink Experiment
-
-```python
-# 1. Detect Facial Landmarks
-
-from detect_images import process_images
-
-process_images(
-    image_dir = "./images",
-    output_dir = "./images/output",
-    model_path = "./model/shape_predictor_68_face_landmarks.dat",
-    save_marked = True
-)
-
-# 2. Compare Fixations to Facial Regions
-
-from comparision_fixation_images_eyelink import process_fixation_image
-
-process_fixation_image(
-    input_txt_path = "./fixation_data.txt",
-    csvtable_path = "./images/output/all_landmarks.csv",
-    imagecolumn = "image_column",
-    output_path = "./output/output_fixation_data.csv",
-)
-```
-
-#### Image Stimuli for Tobii Experiment
-
-```python
-# 1. Detect Facial Landmarks
-
-from detect_images import process_images
-
-process_images(
-    image_dir = "./images",
-    output_dir = "./images/output",
-    model_path = "./model/shape_predictor_68_face_landmarks.dat",
-    save_marked = True
-)
-
-# 2. Compare Fixations to Facial Regions
-
-from comparision_fixation_images_tobii import process_fixation_image
-
-process_fixation_image(
-    input_folder = "./fixation_data",
-    output_folder = "./fixation_data/output",
-    csvtable_path = "./images/output/all_landmarks.csv",
-    imagecolumn = "Presented Media name"
+    input_path = "./example_data/EyeLink/fixation_data/fixation_data_video.txt",
+    csvtable_dir = "./example_data/EyeLink/videos/output",
+    fix_x_column = "CURRENT_FIX_X",
+    fix_y_column = "CURRENT_FIX_Y",
+    video_name_column = "VIDEO_NAME_END",
+    frame_index_column = "VIDEO_FRAME_INDEX_END",
+    video_filter = ".mp4",
+    output_path = "./example_data/EyeLink/fixation_data/output/fixation_data_video_out.csv"
 )
 ```
 
@@ -353,14 +323,13 @@ process_fixation_image(
 from facial_video_processor import process_videos
 
 process_videos(
-    video_dir = "./videos",
-    output_dir = "./videos/annotated_videos",
-    model_path = "./shape_predictor_68_face_landmarks.dat",
-    max_workers = 4
+    video_dir = "./example_data/EyeLink/videos",
+    output_dir = "./example_data/EyeLink/videos/output",
+    model_path = "./model/shape_predictor_68_face_landmarks.dat",
+    max_workers = 8
 )
 ```
 
 ## Citation
 
 To be done.
-

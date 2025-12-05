@@ -10,5 +10,6 @@ ffpyplayer
 kivy
 pandas
 tqdm
+ffpyplayer
 
 sudo apt install xclip

@@ -1,10 +1,10 @@
 import os
 import cv2
 import dlib
-from moviepy import VideoFileClip
+from moviepy.editor import VideoFileClip
 from tqdm import tqdm
 import concurrent.futures
-from main_module import shape_to_numpy_array, visualize_facial_landmarks
+from main_module import shape_to_numpy, visualize_facial_landmarks, return_scaled_shape
 
 
 def ensure_trailing_slash(path: str) -> str:
@@ -34,8 +34,9 @@ def make_image_processor(detector, predictor):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         rects = detector(gray, 1)
         for rect in rects:
-            shape = shape_to_numpy_array(predictor(gray, rect))
-            return visualize_facial_landmarks(image.copy(), shape)
+            shape_np = shape_to_numpy(predictor(gray, rect))
+            scaled_shape = return_scaled_shape(shape_np)
+            return visualize_facial_landmarks(image.copy(), scaled_shape)
         return image  # Return original if no face detected
     return process_image
 
@@ -52,25 +53,32 @@ def process_single_video(video_file, video_dir, output_dir, model_path):
     process_image = make_image_processor(detector, predictor)
 
     try:
-        clip = VideoFileClip(video_path)
-        fps = clip.fps
-        width, height = clip.size
+        cap = cv2.VideoCapture(video_path)
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        count = 0
 
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         writer = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
-        frame_count = int(clip.duration * fps)
+        pbar = tqdm(total=total_frames, desc=f"{video_file}", position=0, leave=False)
 
-        for idx, frame in enumerate(tqdm(clip.iter_frames(fps=fps, dtype="uint8"),
-                                          total=frame_count,
-                                          desc=f"Processing {video_file}",
-                                          position=0, leave=True)):
-            # MoviePy gives RGB, convert to BGR for OpenCV
-            bgr_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-            processed = process_image(bgr_frame)
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            count += 1
+            pbar.update(1)
+            processed = process_image(frame)
             writer.write(processed)
 
+        cap.release()
         writer.release()
+        pbar.close()
+
         print(f"[INFO] Saved processed video to: {output_path}")
 
     except Exception as e:
@@ -99,12 +107,4 @@ def process_videos(video_dir: str, output_dir: str, model_path: str = None, max_
             try:
                 future.result()
             except Exception as exc:
-                print(f"[ERROR] Video processing generated an exception: {exc}")
-
-
-if __name__ == "__main__":
-    video_input_dir = "/home/hello/Documents/videos/"
-    video_output_dir = "/home/hello/Documents/videos_para/"
-    model_file_path = None
-
-    process_videos(video_input_dir, video_output_dir, model_file_path, max_workers=4)
+                print(f"[ERROR] Video {video_file} processing generated an exception: {exc}")

@@ -25,7 +25,6 @@ Root:
     tabImage_txt_input_fixation_path:tabImage_txt_input_fixation_path
     tabImage_chbx_output_enable:tabImage_chbx_output_enable
     tabImage_txt_output_path:tabImage_txt_output_path
-    tabImage_chbx_save_raw_enable:tabImage_chbx_save_raw_enable
     tabImage_chbx_save_marked_enable:tabImage_chbx_save_marked_enable
     tabImage_image1:tabImage_image1
     tabImage_image2:tabImage_image2
@@ -50,20 +49,20 @@ Root:
                 size_hint_y: 1                     
                 Label:
                     id: tabVideos_label
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text: "Enter information to start"
                     markup: True                  
             BoxLayout:
                 size_hint_y: 4
                 Video:
                     id:tabVideos_video1
-                    source: 'example_data/videos/M2H_1min.gif'  # JPG图片路径
+                    source: app.video1_path  # GIF图片路径
                     state: 'play'
                     options: {'eos': 'loop'}
                     allow_stretch: True
                 Video:
                     id:tabVideos_video2
-                    source: 'example_data/videos/M2H_1min_withlandmark.gif'  # JPG图片路径
+                    source: app.video2_path  # GIF图片路径
                     state: 'play'
                     options: {'eos': 'loop'}
                     allow_stretch: True
@@ -75,12 +74,12 @@ Root:
                     active: False 
                     on_release: root.tabVideos_on_video_checkbox()             
                 Label:
-                    font_size: 40  # 单位px 
+                    font_size: '20sp'  # 单位px 
                     text: "Video Stimuli Directory"
                     size_hint_x: 4 
                 TextInput: 
                     id: tabVideos_txt_video_input
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text: "click, then drag and drop"
                     on_focus: root.tabVideos_on_focus_txt_video_input()
                     size_hint_x: 5 
@@ -93,12 +92,12 @@ Root:
                     active: True 
                     on_release: root.tabVideos_on_eyemovement_checkbox()              
                 Label:
-                    font_size: 40  # 单位px 
+                    font_size: '20sp'  # 单位px 
                     text: "Eyemovement Data"
                     size_hint_x: 4
                 TextInput: 
                     id: tabVideos_txt_eyemovement_input
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text: "click, then drag and drop"
                     on_focus: root.tabVideos_on_focus_txt_eyemovement_input()
                     size_hint_x: 5
@@ -110,11 +109,11 @@ Root:
                     active: False 
                     on_release: root.tabVideos_on_output_checkbox()             
                 Label:
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text : "Output Directory"
                     size_hint_x: 4
                 TextInput:
-                    font_size: 40  # 单位px 
+                    font_size: '20sp'  # 单位px 
                     id: tabVideos_txt_output_path
                     text:'click, then drag and drop'
                     on_focus: root.tabVideos_on_focus_output()
@@ -128,7 +127,7 @@ Root:
                     active: True 
                     on_release: root.tabVideos_on_save_raw_checkbox() 
                 Label:
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text : "Save Raw Images"
                     size_hint_x: 4
                 CheckBox:
@@ -137,18 +136,18 @@ Root:
                     active: True 
                     on_release: root.tabVideos_on_save_marked_checkbox() 
                 Label:
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text : "Save Marked Images"
                     size_hint_x: 4                    
             BoxLayout:
                 size_hint_y: 1 
                 Button:
                     id: tabVideos_Button_Process_and_Save
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text: "Process and Save"
                     on_press: root.tabVideos_run_Process()
                 Button:
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text: "Exit"
                     on_press: root.clkfunc()
 
@@ -164,21 +163,21 @@ Root:
                 size_hint_y: 1                     
                 Label:
                     id: tabImage_label
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text: "Enter information to start"
                     markup: True                 
             BoxLayout:
                 size_hint_y: 5
                 Image:
                     id:tabImage_image1
-                    source: 'example_data/images/M2H_frame65.jpg'  # JPG图片路径
+                    source: app.image1_path  # JPG图片路径
                     allow_stretch: True  # 允许拉伸适应布局
                     #keep_ratio: True     # 保持宽高比
                     #size_hint: (1, 1)  # 设置图片大小比例
                     pos_hint: {'center_x': 0.5}  # 水平居中^3^^4^
                 Image:
                     id:tabImage_image2
-                    source: 'example_data/images/M2H_frame65_output.jpg'  # JPG图片路径
+                    source: app.image2_path  # JPG图片路径
                     allow_stretch: True  # 允许拉伸适应布局
                     #keep_ratio: True     # 保持宽高比
                     #size_hint: (1, 1)  # 设置图片大小比例
@@ -191,11 +190,11 @@ Root:
                     active: False 
                     on_release: root.tabImage_on_input_image_checkbox()             
                 Label:
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text : "Image file Directory"
                     size_hint_x: 4
                 TextInput:
-                    font_size: 40  # 单位px 
+                    font_size: '20sp'  # 单位px 
                     id: tabImage_txt_input_image_path
                     text:'click, then drag and drop'
                     on_focus: root.tabImage_on_focus_input_image()
@@ -209,13 +208,13 @@ Root:
                     active: False 
                     on_release: root.tabImage_on_image_column_checkbox()             
                 Label:
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text : "Image Header"
                     size_hint_x: 4
                 TextInput:
-                    font_size: 40  # 单位px 
+                    font_size: '20sp'  # 单位px 
                     id: tabImage_txt_image_column
-                    text:'right'
+                    text:'Image_Column'
                     on_focus: root.tabImage_on_focus_image_column()
                     size_hint_x: 5 
                     disabled:True 
@@ -227,11 +226,11 @@ Root:
                     active: False 
                     on_release: root.tabImage_on_input_fixation_checkbox()             
                 Label:
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text : "Eyemovement file"
                     size_hint_x: 4
                 TextInput:
-                    font_size: 40  # 单位px 
+                    font_size: '20sp'  # 单位px 
                     id: tabImage_txt_input_fixation_path
                     text:'click, then drag and drop'
                     on_focus: root.tabImage_on_focus_input_fixation()
@@ -245,11 +244,11 @@ Root:
                     active: False 
                     on_release: root.tabImage_on_output_checkbox()             
                 Label:
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text : "Output Directory"
                     size_hint_x: 4
                 TextInput:
-                    font_size: 40  # 单位px 
+                    font_size: '20sp'  # 单位px 
                     id: tabImage_txt_output_path
                     text:'click, then drag and drop'
                     on_focus: root.tabImage_on_focus_output()
@@ -258,32 +257,23 @@ Root:
             BoxLayout:
                 size_hint_y: 1
                 CheckBox:
-                    id: tabImage_chbx_save_raw_enable                    
-                    size_hint_x: 1
-                    active: True 
-                    on_release: root.tabImage_on_save_raw_checkbox() 
-                Label:
-                    font_size: 40  # 单位px
-                    text : "Save Raw Images"
-                    size_hint_x: 4
-                CheckBox:
                     id: tabImage_chbx_save_marked_enable                    
                     size_hint_x: 1
                     active: True 
                     on_release: root.tabImage_on_save_marked_checkbox() 
                 Label:
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text : "Save Marked Images"
                     size_hint_x: 4  
             BoxLayout:
                 size_hint_y: 1
                 Button:
                     id: tabImage_Button_Process_and_Save
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text: "Process and Save"
                     on_press: root.tabImage_run_Process()
                 Button:
-                    font_size: 40  # 单位px
+                    font_size: '20sp'  # 单位px
                     text: "Exit"
                     on_press: root.clkfunc()
 
