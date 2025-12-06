@@ -15,7 +15,7 @@ conda activate facetrack
 conda install numpy pandas tqdm
 conda install -c conda-forge opencv dlib moviepy
 conda install -c conda-forge kivy
-conda install -c conda-forge ffpyplayer
+pip install ffpyplayer
 ```
 5. Verify installation (run in Python shell)
 ```
