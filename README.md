@@ -42,7 +42,7 @@ Besides, researchers can customize their own area of interest by modifying `REGI
 
 ### Fixation Comparison
 
-Each fixation coordinate is compared against the bounding box of each facial region. Binary inclusion results are recorded, and pixel areas of the regions are calculated for further analysis (e.g., area normalization of fixation counts).
+Each fixation coordinate is compared against the polygon contour (e.g., eye/mouth boundaries extracted via facial landmarks)  of each facial region. Binary inclusion results are recorded, and pixel areas of the regions are calculated for further analysis (e.g., area normalization of fixation counts).
 
 ### Annotated Video Generation
 
