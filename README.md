@@ -62,7 +62,7 @@ The `process_videos` function enables the generation of videos with overlaid fac
   - `ffpyplayer` (for GUI)
 - **Pre-trained Model**: `shape_predictor_68_face_landmarks.dat` (Dlib)
 
-All required libraries can be installed via `pip`, and the model can be downloaded from the official Dlib repository.
+All required libraries can be installed via `pip` or 'conda', and the model can be downloaded from the official Dlib repository. For 'conda' installation instructions, please refer to the "Installation" section.
 
 ## Input and Output Formats
 
