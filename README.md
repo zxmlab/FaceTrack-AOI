@@ -126,7 +126,7 @@ conda activate facetrack
 ```
 
 ## Usage (for GUI user)
-At present, the GUI handles only EyeLink fixation data. Launch it by running the following command in the `facetrack` environment terminal:
+Launch it by running the following command in the `facetrack` environment terminal:
 
 ```bash
 python ./facedetection_gui.py
