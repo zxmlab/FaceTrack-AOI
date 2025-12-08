@@ -74,7 +74,7 @@ All required libraries can be installed via `pip` or 'conda', and the model can 
 
 ### Fixation Data Format
 The tool works with typical eye-tracking data exported from commercial eye-trackers (e.g., Eyelink, Tobii) and custom experimental setups, as long as the data includes the requisite spatial and temporal fields for analysis. 
-corresponding eye movement data exported from the vendor's exported files (e.g., fixation reports exported from Eyelink DataViewer or Tobii Pro Lab) or custom data. The input data must be a tab-delimited file containing the gaze point coordinates (X and Y) as well as task-specific fields—for example, video-based datasets require columns for the video name and frame index, whereas image-based datasets require a column indicating the image name (see example data for details). 
+Corresponding eye movement data exported from the vendor's exported files (e.g., fixation reports exported from Eyelink DataViewer or Tobii Pro Lab) or custom data. The input data must be a tab-delimited file containing the gaze point coordinates (X and Y) as well as task-specific fields—for example, video-based datasets require columns for the video name and frame index, whereas image-based datasets require a column indicating the image name (see example data for details). 
 
 
 #### DataViewer Export
