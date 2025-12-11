@@ -211,6 +211,7 @@ Use the `process_all_videos` function in `detect_videos.py` with these parameter
 | `model_path`    | Path to the pre-trained model |
 | `save_raw`      | Whether to save raw video frames (set to `False` by default) |
 | `save_marked`   | Whether to save AOI-marked frames (set to `False` by default) |
+| `video_filter`  | Video file extension |
 | `max_workers`   | Maximum number of CPU workers (set to `8` by default) |
 
 **Note:** The returned x- and y-coordinates are based on the original image or video size. For fixation comparison, you may need to restore the size and position of the image or video according to the experiment screen settings.
@@ -301,6 +302,7 @@ process_all_videos(
     model_path = "./model/shape_predictor_68_face_landmarks.dat",
     save_raw = True,
     save_marked = True,
+    video_filter = ".mp4",
     max_workers = 8
 )
 

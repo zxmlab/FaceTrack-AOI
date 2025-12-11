@@ -37,6 +37,7 @@ process_all_videos(
     model_path = "./model/shape_predictor_68_face_landmarks.dat",
     save_raw = True,
     save_marked = True,
+    video_filter = ".mp4",
     max_workers = 8
 )
 

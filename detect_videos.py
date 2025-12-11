@@ -76,13 +76,14 @@ def process_all_videos(
     output_dir, 
     model_path,
     save_raw=False, 
-    save_marked=False, 
+    save_marked=False,
+    video_filter='.mp4',
     max_workers=8
 ):
     ensure_dir(output_dir)
 
     video_files = sorted([
-        os.path.join(video_dir, f) for f in os.listdir(video_dir) if f.endswith(".mp4")
+        os.path.join(video_dir, f) for f in os.listdir(video_dir) if f.endswith(video_filter)
     ])
 
     thread_local = threading.local()
