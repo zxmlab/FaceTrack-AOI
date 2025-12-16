@@ -36,7 +36,7 @@ Since the predictor does not return a full-face bounding box, the face regions i
 | Nose     | 2.0                  | 1.2                  |
 | Mouth    | 1.3                  | 1.2                  |
 
-These values can be configured in the `main_module.py` to suit different datasets. We also provide a function that enables the enlargement of an AOI based on a specified magnified visual angle, which can be activated by setting `use_degree=True` in the `return_scaled_shape` function in the `main_module.py`.
+These values can be configured in the `main_module.py` to suit different datasets. We also provide a function that supports AOI enlargement based on a specified magnified visual angle. This functionality can be enabled by setting `use_degree=True` in the `return_scaled_shape` function within `main_module.py`, with the corresponding parameters configured in `REGION_PARAMS` and `SCREEN_PARAMS`. We recommend using a `REGION_PARAMS` value greater than 1.5 and verifying that the resulting AOI meets the analytical requirements prior to further analysis.
 
 Besides, researchers can customize their own area of interest by modifying `REGIONS` and `return_scaled_shape` in the `main_module.py`.
 
