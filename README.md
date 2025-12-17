@@ -170,8 +170,9 @@ The **Image** tab provides the following options:
 | `Output Directory`        | Directory for saving results |
 | `Save Marked Images`      | Save AOI-marked images |
 
-After setting the parameters, click **Process and Save** to run the process.
-Click **Exit** to close the application.
+After setting the parameters, click **Process and Save** to run the process. Click **Exit** to close the application.
+
+You may also refer to this [tutorial video](https://osf.io/zm6dr/files/p5w8s).
 
 
 ## Usage (for Command-Line Users)
