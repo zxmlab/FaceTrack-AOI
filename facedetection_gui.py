@@ -13,8 +13,8 @@ from kivy.uix.image import AsyncImage
 
 from detect_images import process_images
 from detect_videos import process_all_videos
-from comparision_fixation_images import process_fixation_image
-from comparision_fixation_videos import process_fixation_video
+from comparison_fixation_images import process_fixation_image
+from comparison_fixation_videos import process_fixation_video
 import time
 from threading import Thread
 from kivy.clock import Clock
