@@ -256,7 +256,7 @@ Use the `process_fixation_video` function in `comparison_fixation_videos.py` wit
 | `video_filter`      | Video file extension |
 | `output_path`       | Path to output file |
 
-These column names are configured for EyeLink DataViewer exports. If your data file uses different column names, update the corresponding parameters accordingly.
+These column names are configured for EyeLink DataViewer exports. If your data file uses different column names, update the corresponding parameters accordingly. Additionally, for cases where a custom variable is used to specify the frame index, you can first prepare this column in your data (for example, add a new column `CUSTOM_INDEX`), and then set `frame_index_column` to this variable (i.e., `frame_index_column = "CUSTOM_INDEX"`).
 
 ---
 
