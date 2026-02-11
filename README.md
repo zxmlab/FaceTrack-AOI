@@ -223,14 +223,14 @@ Use the `process_all_videos` function in `detect_videos.py` with these parameter
 
 Two modules are provided to compare fixations with facial regions:
 
-- `comparison_fixation_images.py`  — for image stimuli experiment
-- `comparison_fixation_videos.py`  — for video stimuli experiment
+- `comparison_images.py`  — for image stimuli experiment
+- `comparison_videos.py`  — for video stimuli experiment
 
 These two modules determine whether fixations fall within facial regions and return corresponding indicators along with the pixel area of each ergion.
 
 #### Images
 
-Use the `process_fixation_image` function in `comparison_fixation_images.py` with the following parameters:
+Use the `process_fixation_image` function in `comparison_images.py` with the following parameters:
 
 | Parameter        | Description |
 |------------------|-------------|
@@ -243,7 +243,7 @@ Use the `process_fixation_image` function in `comparison_fixation_images.py` wit
 
 #### Videos
 
-Use the `process_fixation_video` function in `comparison_fixation_videos.py` with the following parameters:
+Use the `process_fixation_video` function in `comparison_videos.py` with the following parameters:
 
 | Parameter           | Description |
 |---------------------|-------------|
@@ -278,7 +278,7 @@ process_images(
 
 # Step 2: Compare Fixations to Facial Regions
 
-from comparison_fixation_images import process_fixation_image
+from comparison_images import process_fixation_image
 
 process_fixation_image(
     input_path = "./example/Data_Pre-Processed/fixation_data_image.txt",
@@ -309,7 +309,7 @@ process_all_videos(
 
 # Step 2: Compare Fixations to Facial Regions
 
-from comparison_fixation_videos import process_fixation_video
+from comparison_videos import process_fixation_video
 
 process_fixation_video(
     input_path = "./example/Data_Pre-Processed/fixation_data_video.txt",
